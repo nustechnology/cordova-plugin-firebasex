@@ -180,6 +180,19 @@ static NSDictionary* googlePlist;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getCurrentNotifications:(CDVInvokedUrlCommand *)command {
+    @try {
+        [[UNUserNotificationCenter currentNotificationCenter] getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
+            CDVPluginResult* pluginResult;
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:notifications];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+        }];
+    }@catch (NSException *exception) {
+        [self handlePluginExceptionWithContext:exception :command];
+    }
+}
+
 - (NSString *)getAPNSToken {
     NSString* hexToken = nil;
     NSData* apnsToken = [FIRMessaging messaging].APNSToken;
